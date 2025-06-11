@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -44,6 +45,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'common',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist'
 ]
 
 MIDDLEWARE = [
@@ -61,6 +64,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
@@ -143,9 +147,32 @@ SWAGGER_SETTINGS = {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header',
-            'description': 'Example: Token 38485347t747yrgytvtsydif78sg6'
+            'description': 'Example: Token <token>'
+        },
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Example: Bearer <token>'
         }
-    }
+    },
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60), # время жизни токена
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=3), # время жизни refresh
+    "ROTATE_REFRESH_TOKENS": True, # выдаёт новый refresh при обновлении
+    "BLACKLIST_AFTER_ROTATION": True, # старый refresh добавляется в чёрный список
+    "UPDATE_LAST_LOGIN": True, # обновляет время последнего входа
+
+    "ALGORITHM": "HS256", # Алгоритм шифрования
+    "SIGNING_KEY": os.environ.get('SECRET'), # Ключ для подписи токена
+
+    "AUTH_HEADER_TYPES": ("Bearer",), # Префикс в заголовке Authorization
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION", # Имя заголовка (в Django-формате)
+    "USER_ID_FIELD": "id",         # Поле модели пользователя, которое будет сохраняться в токен
+    "USER_ID_CLAIM": "user_id",    # Название поля в payload токена (для извлечения id)
 }
 
 # Internationalization

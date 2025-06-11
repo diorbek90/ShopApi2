@@ -18,6 +18,7 @@ from .serializers import (
     ReviewValidateSerializer
 )
 from common.permissions import IsOwner, IsAnonymousReadOnly, IsStaff
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 PAGE_SIZE = 5
 
@@ -70,6 +71,7 @@ class ProductListCreateAPIView(ListCreateAPIView):
     serializer_class = ProductSerializer
     pagination_class = CustomPagination
     permission_classes = [IsOwner | IsAnonymousReadOnly | IsStaff]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request, *args, **kwargs):
         serializer = ProductValidateSerializer(data=request.data)

@@ -16,6 +16,9 @@ from .models import ConfirmationCode
 import random
 import string
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+from users.serializers import CustomTokenObtainPairSerializer
 
 class AuthorizationAPIView(CreateAPIView):
     serializer_class = AuthValidateSerializer
@@ -43,6 +46,7 @@ class AuthorizationAPIView(CreateAPIView):
 
 class RegistrationAPIView(CreateAPIView):
     serializer_class = RegisterValidateSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -103,3 +107,6 @@ class ConfirmUserAPIView(APIView):
                 'key': token.key
             }
         )
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
