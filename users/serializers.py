@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from .models import ConfirmationCode
 from users.models import CustomUser
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from django.utils.timezone import now
 
 class UserBaseSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -63,3 +63,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['email'] = user.email
         return token
+    
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['birth_date'] = str(user.birth_date)
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        user = self.user
+
+        if user.birth_date:
+            today = now().date()
+            age = today.year - user.birth_date.year - (
+                (today.month, today.day) < (user.birth_date.month, user.birth_date.day)
+            )
+            if age < 18:
+                raise serializers.ValidationError("You must be at least 18 years old.")
+
+        return data
