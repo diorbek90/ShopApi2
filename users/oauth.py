@@ -1,3 +1,5 @@
+import os
+
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -17,8 +19,8 @@ class GoogleLoginView(APIView):
             'https://oauth2.googleapis.com/token',
             data={
                 'code': code,
-                'client_id': '901831003903-csvdkgruqic01k6eiqus7jfeimen09g5.apps.googleusercontent.com',
-                "client_secret": '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',
+                'client_id': os.getenv('CLIENT_ID'),
+                "client_secret": os.getenv('CLIENT_SECRET'),
                 'redirect_uri': 'http://localhost:8000/api/v1/users/google-login',
                 'grant_type': 'authorization_code'
             }
