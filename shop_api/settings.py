@@ -174,6 +174,10 @@ SIMPLE_JWT = {
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
+CELERY_BROKEN_URL = 'redis://127.0.0.1:6379/2'
+CELERY_RESULT_BACKEND =  'redis://127.0.0.1:6379/2'
+
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Bishkek'
